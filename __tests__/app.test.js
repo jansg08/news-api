@@ -73,7 +73,7 @@ describe("/api/articles/:article_id", () => {
 
 describe("/api/articles", () => {
   describe("GET", () => {
-    test("200: responds with an array of all article object without their body property", () => {
+    test("200: responds with an array of all article objects without their body property", () => {
       return request(app)
         .get("/api/articles")
         .expect(200)
@@ -110,6 +110,50 @@ describe("/api/articles", () => {
             coerce: true,
           });
         });
+    });
+  });
+});
+
+describe("/api/articles/:article_id/comments", () => {
+  describe("GET", () => {
+    test("200: responds with array of comments attached to the article matching the given article id", () => {
+      return request(app)
+        .get("/api/articles/1/comments")
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.comments.length).toBe(11);
+          body.comments.forEach((comment) => {
+            expect(typeof comment.author).toBe("string");
+            expect(typeof comment.body).toBe("string");
+            expect(typeof comment.comment_id).toBe("number");
+            expect(typeof comment.article_id).toBe("number");
+            expect(typeof comment.created_at).toBe("string");
+            expect(typeof comment.votes).toBe("number");
+          });
+        });
+    });
+    test("200: responds with array of comments sorted by date in descending order", () => {
+      return request(app)
+        .get("/api/articles/5/comments")
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.comments).toBeSortedBy("created_at", {
+            descending: true,
+            coerce: true,
+          });
+        });
+    });
+    test("404: responds with 'Not found' when provided with a valid but non-existent id", () => {
+      return request(app)
+        .get("/api/articles/145/comments")
+        .expect(404)
+        .then(({ body }) => expect(body.msg).toBe("Not found"));
+    });
+    test("400: responds with 'Bad request' when provided with an invalid id", () => {
+      return request(app)
+        .get("/api/articles/yellow/comments")
+        .expect(400)
+        .then(({ body }) => expect(body.msg).toBe("Bad request"));
     });
   });
 });

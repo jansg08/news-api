@@ -47,3 +47,36 @@ exports.selectArticles = () => {
       })
     );
 };
+
+exports.selectCommentsByArticleId = (id) => {
+  return Promise.all([
+    id,
+    db.query(
+      `
+      SELECT 
+        COUNT(*)
+      FROM
+        articles
+      WHERE
+        articles.article_id = $1
+      `,
+      [id]
+    ),
+  ])
+    .then(([id, { rows }]) => {
+      return Number.parseInt(rows[0].count)
+        ? db.query(
+            `
+              SELECT
+                *
+              FROM
+                comments
+              WHERE
+                comments.article_id = $1
+            `,
+            [id]
+          )
+        : Promise.reject({ code: 404, msg: "Not found" });
+    })
+    .then(({ rows }) => rows);
+};
