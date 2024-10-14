@@ -80,3 +80,18 @@ exports.selectCommentsByArticleId = (id) => {
     })
     .then(({ rows }) => rows);
 };
+
+exports.insertCommentForArticleId = (id, { body, username }) => {
+  return db
+    .query(
+      `
+    INSERT INTO
+      comments (body, author, votes, created_at, article_id)
+    VALUES
+      ($1, $2, $3, $4, $5)
+    RETURNING *;
+    `,
+      [body, username, 0, new Date(), id]
+    )
+    .then(({ rows }) => rows[0]);
+};

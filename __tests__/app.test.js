@@ -156,4 +156,25 @@ describe("/api/articles/:article_id/comments", () => {
         .then(({ body }) => expect(body.msg).toBe("Bad request"));
     });
   });
+  describe("POST", () => {
+    test("201: inserts given comment in the database with the given article id and responds with newly created row", () => {
+      return request(app)
+        .post("/api/articles/3/comments")
+        .send({
+          body: " I carry a log — yes. Is it funny to you? It is not to me.",
+          username: "icellusedkars",
+        })
+        .expect(201)
+        .then(({ body }) => {
+          expect(body.comment.comment_id).toBe(19);
+          expect(body.comment.article_id).toBe(3);
+          expect(body.comment.votes).toBe(0);
+          expect(typeof body.comment.created_at).toBe("string");
+          expect(body.comment.author).toBe("icellusedkars");
+          expect(body.comment.body).toBe(
+            " I carry a log — yes. Is it funny to you? It is not to me."
+          );
+        });
+    });
+  });
 });
