@@ -1,7 +1,8 @@
 # Northcoders News API
 
-For instructions, please head over to [L2C NC News](https://l2c.northcoders.com/courses/be/nc-news).
+This project uses the `PGDATABASE` environment variable to connect to the right database.
 
+After cloning the repo, create a .env.development and .env.test file. In each file set the `PGDATABASE` env variable to the relevant database name. These can be found in the /db/setup.sql file.
 
 
 --- 
