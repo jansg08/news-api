@@ -35,3 +35,26 @@ describe("/api", () => {
     });
   });
 });
+
+describe("/api/articles/:article_id", () => {
+  describe("GET", () => {
+    test("200: responds with article object with all relevant properties and matching the given id", () => {
+      return request(app)
+        .get("/api/articles/6")
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.article).toEqual({
+            article_id: 6,
+            title: "A",
+            topic: "mitch",
+            author: "icellusedkars",
+            body: "Delicious tin of cat food",
+            created_at: "2020-10-18T01:00:00.000Z",
+            votes: 0,
+            article_img_url:
+              "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+          });
+        });
+    });
+  });
+});
