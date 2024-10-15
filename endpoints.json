@@ -70,5 +70,23 @@
         }
       ]
     }
+  },
+  "POST /api/articles/:article_id/comments": {
+    "description": "inserts the provided comment to the database and serves the newly created comment",
+    "queries": [],
+    "requestFormat": {
+      "username": "string",
+      "body": "string"
+    },
+    "exampleResponse": {
+      "comment": {
+        "comment_id": 8,
+        "author": "weegembump",
+        "body": "This was a great article",
+        "created_at": "2018-05-30T15:59:13.341Z",
+        "votes": 0,
+        "article_id": 3
+      }
+    }
   }
 }
