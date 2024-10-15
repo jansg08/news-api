@@ -1,4 +1,5 @@
 const db = require("../db/connection");
+const format = require("pg-format");
 
 exports.selectArticleById = (id) => {
   return db
@@ -18,27 +19,31 @@ exports.selectArticleById = (id) => {
     );
 };
 
-exports.selectArticles = () => {
+exports.selectArticles = (sort_by = "created_at", order = "DESC") => {
   return db
     .query(
-      `
-    SELECT
-      articles.article_id,
-      articles.author,
-      title,
-      topic,
-      articles.created_at,
-      articles.votes,
-      article_img_url,
-      COUNT(comments.comment_id) AS comment_count
-    FROM articles
-    LEFT JOIN comments
-      ON comments.article_id = articles.article_id
-    GROUP BY
-      articles.article_id
-    ORDER BY
-      created_at
-     `
+      format(
+        `
+        SELECT
+          articles.article_id,
+          articles.author,
+          title,
+          topic,
+          articles.created_at,
+          articles.votes,
+          article_img_url,
+          COUNT(comments.comment_id) AS comment_count
+        FROM articles
+        LEFT JOIN comments
+          ON comments.article_id = articles.article_id
+        GROUP BY
+          articles.article_id
+        ORDER BY
+          %I %s;
+        `,
+        sort_by,
+        order
+      )
     )
     .then(({ rows }) =>
       rows.map((row) => {
