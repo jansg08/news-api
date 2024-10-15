@@ -43,7 +43,7 @@ describe("/api/articles/:article_id", () => {
         .get("/api/articles/6")
         .expect(200)
         .then(({ body }) => {
-          expect(body.article).toEqual({
+          expect(body.article).toMatchObject({
             article_id: 6,
             title: "A",
             topic: "mitch",
@@ -54,6 +54,14 @@ describe("/api/articles/:article_id", () => {
             article_img_url:
               "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
           });
+        });
+    });
+    test("200: responds with an articles object including the comment_count key equalling the total comments for that article", () => {
+      return request(app)
+        .get("/api/articles/5")
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.article.comment_count).toBe(2);
         });
     });
     test("404: responds with 'Not found' when provided with a valid but non-existent id", () => {

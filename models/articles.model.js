@@ -6,17 +6,33 @@ exports.selectArticleById = (id) => {
     .query(
       `
       SELECT
-        *
+        articles.article_id,
+        articles.author,
+        articles.body,
+        title,
+        topic,
+        articles.created_at,
+        articles.votes,
+        article_img_url,
+        COUNT(comments.comment_id) AS comment_count
       FROM
         articles
+      LEFT JOIN comments
+        ON comments.article_id = articles.article_id
       WHERE
-        article_id = $1
+        articles.article_id = $1
+      GROUP BY
+        articles.article_id;
       `,
       [id]
     )
-    .then(
-      ({ rows }) => rows[0] || Promise.reject({ code: 404, msg: "Not found" })
-    );
+    .then(({ rows }) => {
+      if (rows[0]) {
+        rows[0].comment_count = Number.parseInt(rows[0].comment_count);
+        return rows[0];
+      }
+      return Promise.reject({ code: 404, msg: "Not found" });
+    });
 };
 
 exports.selectArticles = (
@@ -50,7 +66,8 @@ exports.selectArticles = (
           articles.votes,
           article_img_url,
           COUNT(comments.comment_id) AS comment_count
-        FROM articles
+        FROM
+          articles
         LEFT JOIN comments
           ON comments.article_id = articles.article_id
         WHERE
