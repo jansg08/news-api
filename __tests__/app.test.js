@@ -89,6 +89,33 @@ describe("/api/articles/:article_id", () => {
           });
         });
     });
+    test("404: responds with 'Not found' when provided with a valid but non-existent id", () => {
+      return request(app)
+        .patch("/api/articles/145")
+        .send({ inc_votes: 50 })
+        .expect(404)
+        .then(({ body }) => expect(body.msg).toBe("Not found"));
+    });
+    test("400: responds with 'Bad request' when provided with an invalid id", () => {
+      return request(app)
+        .patch("/api/articles/yellow")
+        .send({ inc_votes: 50 })
+        .expect(400)
+        .then(({ body }) => expect(body.msg).toBe("Bad request"));
+    });
+    test("400: responds with 'Bad request' when provided with an invalid request body", () => {
+      const assertion1 = request(app)
+        .patch("/api/articles/yellow")
+        .send()
+        .expect(400)
+        .then(({ body }) => expect(body.msg).toBe("Bad request"));
+      const assertion2 = request(app)
+        .patch("/api/articles/yellow")
+        .send({ inc_votes: "barney" })
+        .expect(400)
+        .then(({ body }) => expect(body.msg).toBe("Bad request"));
+      return Promise.all([assertion1, assertion2]);
+    });
   });
 });
 
