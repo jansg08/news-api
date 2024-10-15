@@ -199,6 +199,16 @@ describe("/api/articles", () => {
           });
       });
     });
+    describe("topic query", () => {
+      test("200: responds with an array of articles filtered by the topic provided by the topic query", () => {
+        return request(app)
+          .get("/api/articles?topic=mitch")
+          .expect(200)
+          .then(({ body }) => {
+            body.articles.forEach(({ topic }) => expect(topic).toBe("mitch"));
+          });
+      });
+    });
   });
 });
 

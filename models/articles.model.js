@@ -19,7 +19,11 @@ exports.selectArticleById = (id) => {
     );
 };
 
-exports.selectArticles = (sort_by = "created_at", order = "DESC") => {
+exports.selectArticles = (
+  sort_by = "created_at",
+  order = "DESC",
+  topic = "%%"
+) => {
   return db
     .query(
       format(
@@ -36,11 +40,14 @@ exports.selectArticles = (sort_by = "created_at", order = "DESC") => {
         FROM articles
         LEFT JOIN comments
           ON comments.article_id = articles.article_id
+        WHERE
+          topic LIKE %L
         GROUP BY
           articles.article_id
         ORDER BY
           %I %s;
         `,
+        topic,
         sort_by,
         order
       )
