@@ -216,6 +216,9 @@ describe("/api/articles", () => {
             body.articles.forEach(({ topic }) => expect(topic).toBe("mitch"));
           });
       });
+      test("204: responds with no content when provided with valid topic value but no articles are available for it", () => {
+        return request(app).get("/api/articles?topic=paper").expect(204);
+      });
       test("400: responds with 'Bad request' when an invalid topic is given for the topic query", () => {
         return request(app)
           .get("/api/articles?topic=tutorials")
