@@ -16,7 +16,13 @@ exports.getArticleById = (req, res, next) => {
 exports.getArticles = (req, res, next) => {
   const { sort_by, order, topic } = req.query;
   return selectArticles(sort_by, order, topic)
-    .then((articles) => res.status(200).send({ articles }))
+    .then((articles) => {
+      if (articles.length) {
+        res.status(200).send({ articles });
+      } else {
+        res.status(204).send();
+      }
+    })
     .catch((err) => next(err));
 };
 
