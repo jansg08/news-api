@@ -143,6 +143,14 @@ describe("/api/articles/:article_id/comments", () => {
           });
         });
     });
+    test("204: responds with empty body when given a valid article id but not comments are available for it", () => {
+      return request(app)
+        .get("/api/articles/2/comments")
+        .expect(204)
+        .then(({ body }) => {
+          expect(body).toEqual({});
+        });
+    });
     test("404: responds with 'Not found' when provided with a valid but non-existent id", () => {
       return request(app)
         .get("/api/articles/145/comments")
