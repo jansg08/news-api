@@ -69,6 +69,54 @@ describe("/api/articles/:article_id", () => {
         .then(({ body }) => expect(body.msg).toBe("Bad request"));
     });
   });
+  describe("PATCH", () => {
+    test("200: updates votes for given article id by given increment and servers newly updated article", () => {
+      return request(app)
+        .patch("/api/articles/6")
+        .send({ inc_votes: 50 })
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.article).toEqual({
+            article_id: 6,
+            title: "A",
+            topic: "mitch",
+            author: "icellusedkars",
+            body: "Delicious tin of cat food",
+            created_at: "2020-10-18T01:00:00.000Z",
+            votes: 50,
+            article_img_url:
+              "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+          });
+        });
+    });
+    test("404: responds with 'Not found' when provided with a valid but non-existent id", () => {
+      return request(app)
+        .patch("/api/articles/145")
+        .send({ inc_votes: 50 })
+        .expect(404)
+        .then(({ body }) => expect(body.msg).toBe("Not found"));
+    });
+    test("400: responds with 'Bad request' when provided with an invalid id", () => {
+      return request(app)
+        .patch("/api/articles/yellow")
+        .send({ inc_votes: 50 })
+        .expect(400)
+        .then(({ body }) => expect(body.msg).toBe("Bad request"));
+    });
+    test("400: responds with 'Bad request' when provided with an invalid request body", () => {
+      const assertion1 = request(app)
+        .patch("/api/articles/yellow")
+        .send()
+        .expect(400)
+        .then(({ body }) => expect(body.msg).toBe("Bad request"));
+      const assertion2 = request(app)
+        .patch("/api/articles/yellow")
+        .send({ inc_votes: "barney" })
+        .expect(400)
+        .then(({ body }) => expect(body.msg).toBe("Bad request"));
+      return Promise.all([assertion1, assertion2]);
+    });
+  });
 });
 
 describe("/api/articles", () => {
