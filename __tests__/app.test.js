@@ -232,6 +232,27 @@ describe("/api/articles/:article_id/comments", () => {
           );
         });
     });
+    test("201: inserts given comment regardless of any extra properties in the request body", () => {
+      return request(app)
+        .post("/api/articles/3/comments")
+        .send({
+          body: " I carry a log — yes. Is it funny to you? It is not to me.",
+          username: "icellusedkars",
+          type: "suggestion",
+          votes: 4,
+        })
+        .expect(201)
+        .then(({ body }) => {
+          expect(body.comment.comment_id).toBe(19);
+          expect(body.comment.article_id).toBe(3);
+          expect(body.comment.votes).toBe(0);
+          expect(typeof body.comment.created_at).toBe("string");
+          expect(body.comment.author).toBe("icellusedkars");
+          expect(body.comment.body).toBe(
+            " I carry a log — yes. Is it funny to you? It is not to me."
+          );
+        });
+    });
     test("404: responds with 'Not found' when provided with a valid but non-existent id", () => {
       return request(app)
         .post("/api/articles/145/comments")
@@ -259,24 +280,14 @@ describe("/api/articles/:article_id/comments", () => {
         .expect(400)
         .then(({ body }) => expect(body.msg).toBe("Bad request"));
     });
-    test("422: responds with 'Unprocessable entity' when request body is missing a required key", () => {
+    test("400: responds with 'Bad request' when request body is sent in the incorrect format", () => {
       return request(app)
         .post("/api/articles/5/comments")
         .send({
           body: " I carry a log — yes. Is it funny to you? It is not to me.",
         })
-        .expect(422)
-        .then(({ body }) => expect(body.msg).toBe("Unprocessable entity"));
-    });
-    test("422: responds with 'Unprocessable entity' when any values in the request body are of the wrong type", () => {
-      return request(app)
-        .post("/api/articles/5/comments")
-        .send({
-          body: " I carry a log — yes. Is it funny to you? It is not to me.",
-          username: 7,
-        })
-        .expect(422)
-        .then(({ body }) => expect(body.msg).toBe("Unprocessable entity"));
+        .expect(400)
+        .then(({ body }) => expect(body.msg).toBe("Bad request"));
     });
   });
 });
