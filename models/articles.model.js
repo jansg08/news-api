@@ -19,11 +19,28 @@ exports.selectArticleById = (id) => {
     );
 };
 
-exports.selectArticles = (sort_by = "created_at", order = "DESC") => {
+exports.selectArticles = (
+  sort_by = "created_at",
+  order = "DESC",
+  topic = "%%"
+) => {
   return db
     .query(
-      format(
-        `
+      `
+    SELECT
+      slug
+    FROM
+      topics;
+    `
+    )
+    .then(({ rows }) => {
+      const validTopics = ["%%", ...rows.map(({ slug }) => slug)];
+      if (!validTopics.includes(topic)) {
+        return Promise.reject({ code: 400, msg: "Bad request" });
+      }
+      return db.query(
+        format(
+          `
         SELECT
           articles.article_id,
           articles.author,
@@ -36,15 +53,19 @@ exports.selectArticles = (sort_by = "created_at", order = "DESC") => {
         FROM articles
         LEFT JOIN comments
           ON comments.article_id = articles.article_id
+        WHERE
+          topic LIKE %L
         GROUP BY
           articles.article_id
         ORDER BY
           %I %s;
         `,
-        sort_by,
-        order
-      )
-    )
+          topic,
+          sort_by,
+          order
+        )
+      );
+    })
     .then(({ rows }) =>
       rows.map((row) => {
         row.comment_count = Number.parseInt(row.comment_count);
