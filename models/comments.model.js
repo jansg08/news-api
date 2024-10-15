@@ -12,5 +12,7 @@ exports.removeCommentById = (id) => {
     `,
       [id]
     )
-    .then(({ rows }) => rows[0]);
+    .then(
+      ({ rows }) => rows[0] || Promise.reject({ code: 404, msg: "Not found" })
+    );
 };
