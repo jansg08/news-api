@@ -18,8 +18,15 @@ exports.getArticles = (req, res, next) => {
 };
 
 exports.getCommentsByArticleId = (req, res, next) => {
-  return selectCommentsByArticleId(req.params.article_id)
-    .then((comments) => res.status(200).send({ comments }))
+  const id = req.params.article_id;
+  return Promise.all([selectArticleById(id), selectCommentsByArticleId(id)])
+    .then(([article, comments]) => {
+      if (comments.length) {
+        res.status(200).send({ comments });
+      } else {
+        res.status(204).send();
+      }
+    })
     .catch((err) => next(err));
 };
 

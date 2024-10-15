@@ -49,6 +49,19 @@ exports.selectArticles = () => {
 };
 
 exports.selectCommentsByArticleId = (id) => {
+  return db
+    .query(
+      `
+              SELECT
+                *
+              FROM
+                comments
+              WHERE
+                comments.article_id = $1
+            `,
+      [id]
+    )
+    .then(({ rows }) => rows);
   return Promise.all([
     id,
     db.query(
