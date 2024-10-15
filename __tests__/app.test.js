@@ -159,6 +159,26 @@ describe("/api/articles", () => {
           });
         });
     });
+    test("200: responds with an array sorted by the column provided by the sort_by query", () => {
+      return request(app)
+        .get("/api/articles?sort_by=votes")
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.articles).toBeSortedBy("votes", {
+            descending: true,
+          });
+        });
+    });
+    test("200: responds with an array sorted by the column provided by the sort_by query and in the direction provided by the order query", () => {
+      return request(app)
+        .get("/api/articles?sort_by=votes&order=asc")
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.articles).toBeSortedBy("votes", {
+            descending: false,
+          });
+        });
+    });
   });
 });
 
@@ -321,7 +341,7 @@ describe("/api/comments/:comment_id", () => {
   });
 });
 
-describe.only("/api/users", () => {
+describe("/api/users", () => {
   describe("GET", () => {
     test("200", () => {
       return request(app)
