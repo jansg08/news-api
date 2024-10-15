@@ -291,3 +291,20 @@ describe("/api/articles/:article_id/comments", () => {
     });
   });
 });
+
+describe("/api/comments/:comment_id", () => {
+  describe("DELETE", () => {
+    test("204: responds with empty body and deletes comment from database", () => {
+      return request(app)
+        .delete("/api/comments/5")
+        .expect(204)
+        .then(({ body }) => {
+          expect(body).toEqual({});
+          return db.query(`SELECT * FROM comments WHERE comment_id = 5`);
+        })
+        .then(({ rows }) => {
+          expect(rows).toEqual([]);
+        });
+    });
+  });
+});
