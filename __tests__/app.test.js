@@ -159,41 +159,45 @@ describe("/api/articles", () => {
           });
         });
     });
-    test("200: responds with an array sorted by the column provided by the sort_by query", () => {
-      return request(app)
-        .get("/api/articles?sort_by=votes")
-        .expect(200)
-        .then(({ body }) => {
-          expect(body.articles).toBeSortedBy("votes", {
-            descending: true,
+    describe("sort_by query", () => {
+      test("200: responds with an array sorted by the column provided by the sort_by query", () => {
+        return request(app)
+          .get("/api/articles?sort_by=votes")
+          .expect(200)
+          .then(({ body }) => {
+            expect(body.articles).toBeSortedBy("votes", {
+              descending: true,
+            });
           });
-        });
-    });
-    test("200: responds with an array sorted by the column provided by the sort_by query and in the direction provided by the order query", () => {
-      return request(app)
-        .get("/api/articles?sort_by=votes&order=asc")
-        .expect(200)
-        .then(({ body }) => {
-          expect(body.articles).toBeSortedBy("votes", {
-            descending: false,
+      });
+      test("400: responds with 'Bad request' when an invalid column name is given for the sort_by query", () => {
+        return request(app)
+          .get("/api/articles?sort_by=name")
+          .expect(400)
+          .then(({ body }) => {
+            expect(body.msg).toBe("Bad request");
           });
-        });
+      });
     });
-    test("400: responds with 'Bad request' when an invalid column name is given for the sort_by query", () => {
-      return request(app)
-        .get("/api/articles?sort_by=name")
-        .expect(400)
-        .then(({ body }) => {
-          expect(body.msg).toBe("Bad request");
-        });
-    });
-    test("400: responds with 'Bad request' when an invalid value is given for the order query", () => {
-      return request(app)
-        .get("/api/articles?order=random")
-        .expect(400)
-        .then(({ body }) => {
-          expect(body.msg).toBe("Bad request");
-        });
+    describe("order query", () => {
+      test("200: responds with an array sorted by the column provided by the sort_by query and in the direction provided by the order query", () => {
+        return request(app)
+          .get("/api/articles?sort_by=votes&order=asc")
+          .expect(200)
+          .then(({ body }) => {
+            expect(body.articles).toBeSortedBy("votes", {
+              descending: false,
+            });
+          });
+      });
+      test("400: responds with 'Bad request' when an invalid value is given for the order query", () => {
+        return request(app)
+          .get("/api/articles?order=random")
+          .expect(400)
+          .then(({ body }) => {
+            expect(body.msg).toBe("Bad request");
+          });
+      });
     });
   });
 });
