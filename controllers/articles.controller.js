@@ -26,7 +26,10 @@ exports.getCommentsByArticleId = (req, res, next) => {
 exports.postCommentForArticleId = (req, res, next) => {
   const id = req.params.article_id;
   const newComment = req.body;
-  return insertCommentForArticleId(id, newComment)
-    .then((comment) => res.status(201).send({ comment }))
+  return Promise.all([
+    selectArticleById(id),
+    insertCommentForArticleId(id, newComment),
+  ])
+    .then(([article, comment]) => res.status(201).send({ comment }))
     .catch((err) => next(err));
 };

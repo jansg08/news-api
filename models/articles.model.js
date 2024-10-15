@@ -81,17 +81,27 @@ exports.selectCommentsByArticleId = (id) => {
     .then(({ rows }) => rows);
 };
 
-exports.insertCommentForArticleId = (id, { body, username }) => {
+exports.insertCommentForArticleId = (id, comment) => {
+  const commentFormat = [
+    ["body", "string"],
+    ["username", "string"],
+  ];
+  if (!Object.keys(comment).length) {
+    return Promise.reject({ code: 400, msg: "Bad request" });
+  }
+  if (!commentFormat.every(([key, type]) => typeof comment[key] === type)) {
+    return Promise.reject({ code: 422, msg: "Unprocessable entity" });
+  }
   return db
     .query(
       `
-    INSERT INTO
-      comments (body, author, votes, created_at, article_id)
-    VALUES
-      ($1, $2, $3, $4, $5)
-    RETURNING *;
-    `,
-      [body, username, 0, new Date(), id]
+      INSERT INTO
+        comments (body, author, votes, created_at, article_id)
+      VALUES
+        ($1, $2, $3, $4, $5)
+      RETURNING *;
+      `,
+      [comment.body, comment.username, 0, new Date(), id]
     )
     .then(({ rows }) => rows[0]);
 };

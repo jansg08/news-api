@@ -176,5 +176,51 @@ describe("/api/articles/:article_id/comments", () => {
           );
         });
     });
+    test("404: responds with 'Not found' when provided with a valid but non-existent id", () => {
+      return request(app)
+        .post("/api/articles/145/comments")
+        .send({
+          body: " I carry a log — yes. Is it funny to you? It is not to me.",
+          username: "icellusedkars",
+        })
+        .expect(404)
+        .then(({ body }) => expect(body.msg).toBe("Not found"));
+    });
+    test("400: responds with 'Bad request' when provided with an invalid id", () => {
+      return request(app)
+        .post("/api/articles/yellow/comments")
+        .send({
+          body: " I carry a log — yes. Is it funny to you? It is not to me.",
+          username: "icellusedkars",
+        })
+        .expect(400)
+        .then(({ body }) => expect(body.msg).toBe("Bad request"));
+    });
+    test("400: responds with 'Bad request' when provided with an empty request body", () => {
+      return request(app)
+        .post("/api/articles/5/comments")
+        .send()
+        .expect(400)
+        .then(({ body }) => expect(body.msg).toBe("Bad request"));
+    });
+    test("422: responds with 'Unprocessable entity' when request body is missing a required key", () => {
+      return request(app)
+        .post("/api/articles/5/comments")
+        .send({
+          body: " I carry a log — yes. Is it funny to you? It is not to me.",
+        })
+        .expect(422)
+        .then(({ body }) => expect(body.msg).toBe("Unprocessable entity"));
+    });
+    test("422: responds with 'Unprocessable entity' when any values in the request body are of the wrong type", () => {
+      return request(app)
+        .post("/api/articles/5/comments")
+        .send({
+          body: " I carry a log — yes. Is it funny to you? It is not to me.",
+          username: 7,
+        })
+        .expect(422)
+        .then(({ body }) => expect(body.msg).toBe("Unprocessable entity"));
+    });
   });
 });
