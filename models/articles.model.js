@@ -26,8 +26,21 @@ exports.selectArticles = (
 ) => {
   return db
     .query(
-      format(
-        `
+      `
+    SELECT
+      slug
+    FROM
+      topics;
+    `
+    )
+    .then(({ rows }) => {
+      const validTopics = ["%%", ...rows.map(({ slug }) => slug)];
+      if (!validTopics.includes(topic)) {
+        return Promise.reject({ code: 400, msg: "Bad request" });
+      }
+      return db.query(
+        format(
+          `
         SELECT
           articles.article_id,
           articles.author,
@@ -47,11 +60,12 @@ exports.selectArticles = (
         ORDER BY
           %I %s;
         `,
-        topic,
-        sort_by,
-        order
-      )
-    )
+          topic,
+          sort_by,
+          order
+        )
+      );
+    })
     .then(({ rows }) =>
       rows.map((row) => {
         row.comment_count = Number.parseInt(row.comment_count);

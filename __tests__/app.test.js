@@ -208,6 +208,14 @@ describe("/api/articles", () => {
             body.articles.forEach(({ topic }) => expect(topic).toBe("mitch"));
           });
       });
+      test("400: responds with 'Bad request' when an invalid topic is given for the topic query", () => {
+        return request(app)
+          .get("/api/articles?topic=tutorials")
+          .expect(400)
+          .then(({ body }) => {
+            expect(body.msg).toBe("Bad request");
+          });
+      });
     });
   });
 });
