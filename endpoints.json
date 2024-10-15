@@ -88,5 +88,10 @@
         "article_id": 3
       }
     }
+  },
+  "DELETE /api/comments/:comment_id": {
+    "description": "removes the comment from the database with the given id and serves only a header with 204",
+    "queries": [],
+    "exampleResponse": {}
   }
 }

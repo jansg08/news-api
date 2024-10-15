@@ -291,3 +291,32 @@ describe("/api/articles/:article_id/comments", () => {
     });
   });
 });
+
+describe("/api/comments/:comment_id", () => {
+  describe("DELETE", () => {
+    test("204: responds with empty body and deletes comment from database", () => {
+      return request(app)
+        .delete("/api/comments/5")
+        .expect(204)
+        .then(({ body }) => {
+          expect(body).toEqual({});
+          return db.query(`SELECT * FROM comments WHERE comment_id = 5`);
+        })
+        .then(({ rows }) => {
+          expect(rows).toEqual([]);
+        });
+    });
+    test("404: responds with 'Not found' when provided with a valid but non-existent id", () => {
+      return request(app)
+        .delete("/api/comments/545")
+        .expect(404)
+        .then(({ body }) => expect(body.msg).toBe("Not found"));
+    });
+    test("400: responds with 'Bad request' when provided with an invalid id", () => {
+      return request(app)
+        .delete("/api/comments/yellow")
+        .expect(400)
+        .then(({ body }) => expect(body.msg).toBe("Bad request"));
+    });
+  });
+});
