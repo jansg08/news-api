@@ -88,3 +88,20 @@ exports.insertCommentForArticleId = (id, comment) => {
     )
     .then(({ rows }) => rows[0]);
 };
+
+exports.updateArticleVotes = (id, inc) => {
+  return db
+    .query(
+      `
+      UPDATE
+        articles
+      SET
+        votes = votes + $1
+      WHERE
+        articles.article_id = $2
+      RETURNING *;
+      `,
+      [inc, id]
+    )
+    .then(({ rows }) => rows[0]);
+};
