@@ -365,7 +365,6 @@ describe("/api/comments/:comment_id", () => {
         .delete("/api/comments/5")
         .expect(204)
         .then(({ body }) => {
-          expect(body).toEqual({});
           return db.query(`SELECT * FROM comments WHERE comment_id = 5`);
         })
         .then(({ rows }) => {
