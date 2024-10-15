@@ -65,16 +65,6 @@ exports.selectCommentsByArticleId = (id) => {
 };
 
 exports.insertCommentForArticleId = (id, comment) => {
-  const commentFormat = [
-    ["body", "string"],
-    ["username", "string"],
-  ];
-  if (!Object.keys(comment).length) {
-    return Promise.reject({ code: 400, msg: "Bad request" });
-  }
-  if (!commentFormat.every(([key, type]) => typeof comment[key] === type)) {
-    return Promise.reject({ code: 422, msg: "Unprocessable entity" });
-  }
   return db
     .query(
       `
