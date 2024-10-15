@@ -179,6 +179,22 @@ describe("/api/articles", () => {
           });
         });
     });
+    test("400: responds with 'Bad request' when an invalid column name is given for the sort_by query", () => {
+      return request(app)
+        .get("/api/articles?sort_by=name")
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toBe("Bad request");
+        });
+    });
+    test("400: responds with 'Bad request' when an invalid value is given for the order query", () => {
+      return request(app)
+        .get("/api/articles?order=random")
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toBe("Bad request");
+        });
+    });
   });
 });
 
