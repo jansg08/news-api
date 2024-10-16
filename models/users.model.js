@@ -26,7 +26,7 @@ exports.selectUserByUsername = (username) => {
       `,
       [username]
     )
-    .then(
-      ({ rows }) => rows[0] || Promise.reject({ code: 404, msg: "Not found" })
-    );
+    .then(({ rows }) => {
+      return rows[0] || Promise.reject({ code: 404, msg: "Not found" });
+    });
 };

@@ -308,6 +308,32 @@ describe("/api/articles", () => {
           });
         });
     });
+    test("400: responds with 'Bad request' when provided with an empty request body", () => {
+      return request(app)
+        .post("/api/articles")
+        .send()
+        .expect(400)
+        .then(({ body }) => expect(body.msg).toBe("Bad request"));
+    });
+    test("400: responds with 'Bad request' when request body is sent in the incorrect format", () => {
+      return request(app)
+        .post("/api/articles")
+        .send({
+          title: "UNCOVERED: catspiracy to bring down democracy",
+          topic: "cats",
+          author: "rogersop",
+        })
+        .expect(400)
+        .then(({ body }) => expect(body.msg).toBe("Bad request"));
+    });
+    test("400: responds with 'Bad request' when the username value in the request body does not exist yet", () => {
+      sampleArticle.author = "jota44";
+      return request(app)
+        .post("/api/articles")
+        .send(sampleArticle)
+        .expect(400)
+        .then(({ body }) => expect(body.msg).toBe("Bad request"));
+    });
   });
 });
 
