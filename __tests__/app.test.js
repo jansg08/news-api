@@ -387,6 +387,24 @@ describe("/api/comments/:comment_id", () => {
         .then(({ body }) => expect(body.msg).toBe("Bad request"));
     });
   });
+  describe("PATCH", () => {
+    test("200: updates votes for given comment id by given increment and servers newly updated comment", () => {
+      return request(app)
+        .patch("/api/comments/6")
+        .send({ inc_votes: -15 })
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.comment).toEqual({
+            comment_id: 6,
+            body: "I hate streaming eyes even more",
+            votes: -15,
+            author: "icellusedkars",
+            article_id: 1,
+            created_at: "2020-04-11T21:02:00.000Z",
+          });
+        });
+    });
+  });
 });
 
 describe("/api/users", () => {
