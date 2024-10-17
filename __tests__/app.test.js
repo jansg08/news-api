@@ -229,6 +229,120 @@ describe("/api/articles", () => {
       });
     });
   });
+  describe("POST", () => {
+    const sampleArticle = {
+      title: "UNCOVERED: catspiracy to bring down democracy",
+      body: "Bastet walks amongst us, and the cats are taking arms!",
+      author: "rogersop",
+      topic: "cats",
+    };
+    test("201: inserts given article in the database responds with newly created article object", () => {
+      return request(app)
+        .post("/api/articles")
+        .send({
+          ...sampleArticle,
+          article_img_url:
+            "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+        })
+        .expect(201)
+        .then(({ body }) => {
+          const { article } = body;
+          expect(article).toMatchObject({
+            article_id: 14,
+            title: "UNCOVERED: catspiracy to bring down democracy",
+            topic: "cats",
+            author: "rogersop",
+            body: "Bastet walks amongst us, and the cats are taking arms!",
+            votes: 0,
+            comment_count: 0,
+            article_img_url:
+              "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+          });
+          expect(typeof article.created_at).toBe("string");
+        });
+    });
+    test("201: inserts given article regardless of any extra properties in the request body", () => {
+      return request(app)
+        .post("/api/articles")
+        .send({
+          ...sampleArticle,
+          article_img_url:
+            "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+          tldr: "Don't know, it was too long so I didn't read it",
+        })
+        .expect(201)
+        .then(({ body }) => {
+          const { article } = body;
+          expect(article).toMatchObject({
+            article_id: 14,
+            title: "UNCOVERED: catspiracy to bring down democracy",
+            topic: "cats",
+            author: "rogersop",
+            body: "Bastet walks amongst us, and the cats are taking arms!",
+            votes: 0,
+            comment_count: 0,
+            article_img_url:
+              "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+          });
+          expect(typeof article.created_at).toBe("string");
+        });
+    });
+    test("201: inserts given article when no article img url is given and instead assigns a default url", () => {
+      return request(app)
+        .post("/api/articles")
+        .send(sampleArticle)
+        .expect(201)
+        .then(({ body }) => {
+          const { article } = body;
+          expect(article).toMatchObject({
+            article_id: 14,
+            title: "UNCOVERED: catspiracy to bring down democracy",
+            topic: "cats",
+            author: "rogersop",
+            body: "Bastet walks amongst us, and the cats are taking arms!",
+            votes: 0,
+            comment_count: 0,
+            article_img_url:
+              "https://images.pexels.com/photos/97050/pexels-photo-97050.jpeg?w=700&h=700",
+          });
+          expect(typeof article.created_at).toBe("string");
+        });
+    });
+    test("400: responds with 'Bad request' when provided with an empty request body", () => {
+      return request(app)
+        .post("/api/articles")
+        .send()
+        .expect(400)
+        .then(({ body }) => expect(body.msg).toBe("Bad request"));
+    });
+    test("400: responds with 'Bad request' when request body is sent in the incorrect format", () => {
+      return request(app)
+        .post("/api/articles")
+        .send({
+          title: "UNCOVERED: catspiracy to bring down democracy",
+          topic: "cats",
+          author: "rogersop",
+        })
+        .expect(400)
+        .then(({ body }) => expect(body.msg).toBe("Bad request"));
+    });
+    test("400: responds with 'Bad request' when the username value in the request body does not exist yet", () => {
+      sampleArticle.author = "jota44";
+      return request(app)
+        .post("/api/articles")
+        .send(sampleArticle)
+        .expect(400)
+        .then(({ body }) => expect(body.msg).toBe("Bad request"));
+    });
+    test("400: responds with 'Bad request' when the topic value in the request body does not exist yet", () => {
+      sampleArticle.author = "tutorials";
+      return request(app)
+        .post("/api/articles")
+        .send(sampleArticle)
+        .expect(400)
+        .then(({ body }) => expect(body.msg).toBe("Bad request"));
+    });
+  });
 });
 
 describe("/api/articles/:article_id/comments", () => {

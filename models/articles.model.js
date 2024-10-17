@@ -122,6 +122,33 @@ exports.insertCommentForArticleId = (id, comment) => {
     .then(({ rows }) => rows[0]);
 };
 
+exports.insertArticle = ({ title, body, author, topic, article_img_url }) => {
+  const insertArr = [title, body, author, topic];
+  let addUrlColumn = "";
+  if (article_img_url) {
+    insertArr.push(article_img_url);
+    addUrlColumn = ", article_img_url";
+  }
+  return db
+    .query(
+      format(
+        `
+        INSERT INTO
+          articles (title, body, author, topic${addUrlColumn})
+        VALUES
+          %L
+        RETURNING *;
+        `,
+        [insertArr]
+      )
+    )
+    .then(({ rows }) => {
+      const rowWithCommentCount = { ...rows[0] };
+      rowWithCommentCount.comment_count = 0;
+      return rowWithCommentCount;
+    });
+};
+
 exports.updateArticleVotes = (id, inc) => {
   return db
     .query(

@@ -39,6 +39,30 @@
       ]
     }
   },
+  "POST /api/articles": {
+    "description": "serves an array of all articles",
+    "queries": ["sort_by", "order", "topic"],
+    "requestFormat": {
+      "title": "string",
+      "body": "string",
+      "author": "string (valid username)",
+      "topic": "string (valid topic)",
+      "article_img_url": "string [optional]"
+    },
+    "exampleResponse": {
+      "article": {
+        "article_id": 59,
+        "title": "UNCOVERED: catspiracy to bring down democracy",
+        "topic": "coding",
+        "author": "jessjelly",
+        "body": "Bastet walks amongst us, and the cats are taking arms!",
+        "created_at": "2024-10-16T10:45:17.410Z",
+        "votes": 0,
+        "article_img_url": "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+        "comment_count": 0
+      }
+    }
+  },
   "GET /api/articles/:article_id": {
     "description": "serves the article with the given id",
     "queries": [],
@@ -95,7 +119,7 @@
     "description": "inserts the provided comment to the database and serves the newly created comment",
     "queries": [],
     "requestFormat": {
-      "username": "string",
+      "username": "string (valid username)",
       "body": "string"
     },
     "exampleResponse": {
