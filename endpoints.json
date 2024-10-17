@@ -114,6 +114,11 @@
       }
     }
   },
+  "DELETE /api/articles/:article_id": {
+    "description": "removes the article from the database with the given id and serves only a header with 204",
+    "queries": [],
+    "exampleResponse": {}
+  },
   "GET /api/articles/:article_id/comments": {
     "description": "serves an array of comments associated with the article id",
     "queries": ["limit", "p"],
