@@ -254,11 +254,11 @@ describe("/api/articles", () => {
             author: "rogersop",
             body: "Bastet walks amongst us, and the cats are taking arms!",
             votes: 0,
-            // created_at: expect.any("string"),
             comment_count: 0,
             article_img_url:
               "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
           });
+          expect(typeof article.created_at).toBe("string");
         });
     });
     test("201: inserts given article regardless of any extra properties in the request body", () => {
@@ -280,11 +280,11 @@ describe("/api/articles", () => {
             author: "rogersop",
             body: "Bastet walks amongst us, and the cats are taking arms!",
             votes: 0,
-            // created_at: expect.any("string"),
             comment_count: 0,
             article_img_url:
               "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
           });
+          expect(typeof article.created_at).toBe("string");
         });
     });
     test("201: inserts given article when no article img url is given and instead assigns a default url", () => {
@@ -301,11 +301,11 @@ describe("/api/articles", () => {
             author: "rogersop",
             body: "Bastet walks amongst us, and the cats are taking arms!",
             votes: 0,
-            // created_at: expect.any("string"),
             comment_count: 0,
             article_img_url:
               "https://images.pexels.com/photos/97050/pexels-photo-97050.jpeg?w=700&h=700",
           });
+          expect(typeof article.created_at).toBe("string");
         });
     });
     test("400: responds with 'Bad request' when provided with an empty request body", () => {
@@ -328,6 +328,14 @@ describe("/api/articles", () => {
     });
     test("400: responds with 'Bad request' when the username value in the request body does not exist yet", () => {
       sampleArticle.author = "jota44";
+      return request(app)
+        .post("/api/articles")
+        .send(sampleArticle)
+        .expect(400)
+        .then(({ body }) => expect(body.msg).toBe("Bad request"));
+    });
+    test("400: responds with 'Bad request' when the topic value in the request body does not exist yet", () => {
+      sampleArticle.author = "tutorials";
       return request(app)
         .post("/api/articles")
         .send(sampleArticle)
