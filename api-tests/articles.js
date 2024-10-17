@@ -375,6 +375,18 @@ exports.articlesTest = () =>
               expect(rows).toEqual([]);
             });
         });
+        test("404: responds with 'Not found' when provided with a valid but non-existent id", () => {
+          return request(app)
+            .delete("/api/articles/545")
+            .expect(404)
+            .then(({ body }) => expect(body.msg).toBe("Not found"));
+        });
+        test("400: responds with 'Bad request' when provided with an invalid id", () => {
+          return request(app)
+            .delete("/api/articles/yellow")
+            .expect(400)
+            .then(({ body }) => expect(body.msg).toBe("Bad request"));
+        });
       });
     });
 
