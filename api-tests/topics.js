@@ -56,6 +56,37 @@ exports.topicsTest = () =>
               });
             });
         });
+        test("201: inserts given topic regardless of missing description property", () => {
+          return request(app)
+            .post("/api/topics")
+            .send({
+              slug: "review",
+            })
+            .expect(201)
+            .then(({ body }) => {
+              const { topic } = body;
+              expect(topic).toMatchObject({
+                slug: "review",
+                description: null,
+              });
+            });
+        });
+        test("400: responds with 'Bad request' when provided with an empty request body", () => {
+          return request(app)
+            .post("/api/topics")
+            .send()
+            .expect(400)
+            .then(({ body }) => expect(body.msg).toBe("Bad request"));
+        });
+        test("400: responds with 'Bad request' when request body is sent in the incorrect format", () => {
+          return request(app)
+            .post("/api/topics")
+            .send({
+              description: "Reviews or discusses a certain product",
+            })
+            .expect(400)
+            .then(({ body }) => expect(body.msg).toBe("Bad request"));
+        });
       });
     });
   });
