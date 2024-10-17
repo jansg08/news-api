@@ -21,8 +21,22 @@
       "topics": [{ "slug": "football", "description": "Footie!" }]
     }
   },
+  "POST /api/topics": {
+    "description": "updates database with given topic and serves the newly created topic",
+    "queries": [],
+    "requestFormat": {
+      "slug": "string",
+      "description": "string [optional]"
+    },
+    "exampleResponse": {
+      "topic": {
+        "slug": "review",
+        "description": "Reviews and discusses a certain product"
+      }
+    }
+  },
   "GET /api/articles": {
-    "description": "serves an array of all articles",
+    "description": "serves an array of all articles sorted and filtered by the queries provided",
     "queries": ["sort_by", "order", "topic", "limit", "p"],
     "exampleResponse": {
       "articles": [
@@ -41,8 +55,8 @@
     }
   },
   "POST /api/articles": {
-    "description": "serves an array of all articles",
-    "queries": ["sort_by", "order", "topic"],
+    "description": "updates database with given article and serves the newly created article",
+    "queries": [],
     "requestFormat": {
       "title": "string",
       "body": "string",
