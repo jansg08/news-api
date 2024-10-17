@@ -16,11 +16,11 @@ exports.getArticleById = (req, res, next) => {
 };
 
 exports.getArticles = (req, res, next) => {
-  const { sort_by, order, topic, limit } = req.query;
-  return selectArticles(sort_by, order, topic, limit)
-    .then((articles) => {
-      if (articles.length) {
-        res.status(200).send({ articles });
+  const { sort_by, order, topic, limit, p } = req.query;
+  return selectArticles(sort_by, order, topic, limit, p)
+    .then((articlesWithCount) => {
+      if (articlesWithCount.articles.length) {
+        res.status(200).send(articlesWithCount);
       } else {
         res.status(204).send();
       }

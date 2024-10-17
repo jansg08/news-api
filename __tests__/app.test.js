@@ -239,6 +239,32 @@ describe("/api/articles", () => {
         return request(app).get("/api/articles?limit=0").expect(204);
       });
     });
+    describe("p query", () => {
+      test("200: responds with the 'pth' set articles where each set are of length limit (defaults to 10)", () => {
+        return request(app)
+          .get("/api/articles?p=2")
+          .expect(200)
+          .then(({ body }) => {
+            expect(body.articles.length).toBe(3);
+            expect(body.articles[0].article_id).toBe(8);
+            expect(body.articles[2].article_id).toBe(7);
+          });
+      });
+      test("204: responds with no content when provided with a page number which doesn't exist given the limit", () => {
+        return request(app).get("/api/articles?p=5").expect(204);
+      });
+    });
+    test("200: in addition to articles, responds with the total_count property with the total articles available after filters have been applied", () => {
+      const assertion1 = request(app)
+        .get("/api/articles")
+        .expect(200)
+        .then(({ body }) => expect(body.total_count).toBe(13));
+      const assertion2 = request(app)
+        .get("/api/articles?topic=mitch")
+        .expect(200)
+        .then(({ body }) => expect(body.total_count).toBe(12));
+      return Promise.all([assertion1, assertion2]);
+    });
   });
   describe("POST", () => {
     const sampleArticle = {

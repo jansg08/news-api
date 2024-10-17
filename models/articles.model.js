@@ -39,7 +39,8 @@ exports.selectArticles = (
   sort_by = "created_at",
   order = "DESC",
   topic = "%%",
-  limit = 10
+  limit = 10,
+  p = 1
 ) => {
   return db
     .query(
@@ -55,7 +56,24 @@ exports.selectArticles = (
       if (!validTopics.includes(topic)) {
         return Promise.reject({ code: 400, msg: "Bad request" });
       }
-      return db.query(
+      const countQuery = db.query(
+        format(
+          `
+          SELECT
+            COUNT(*)
+          FROM
+            articles
+          WHERE
+            topic LIKE %L;
+          `,
+          topic,
+          sort_by,
+          order,
+          limit,
+          (p - 1) * limit
+        )
+      );
+      const articlesQuery = db.query(
         format(
           `
         SELECT
@@ -78,21 +96,28 @@ exports.selectArticles = (
         ORDER BY
           %I %s
         LIMIT
+          %L
+        OFFSET
           %L;
         `,
           topic,
           sort_by,
           order,
-          limit
+          limit,
+          (p - 1) * limit
         )
       );
+      return Promise.all([countQuery, articlesQuery]);
     })
-    .then(({ rows }) =>
-      rows.map((row) => {
-        row.comment_count = Number.parseInt(row.comment_count);
-        return row;
-      })
-    );
+    .then(([countResult, articlesResult]) => {
+      return {
+        articles: articlesResult.rows.map((row) => {
+          row.comment_count = Number.parseInt(row.comment_count);
+          return row;
+        }),
+        total_count: Number(countResult.rows[0].count),
+      };
+    });
 };
 
 exports.selectCommentsByArticleId = (id) => {
