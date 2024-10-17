@@ -5,6 +5,7 @@ const {
   insertCommentForArticleId,
   updateArticleVotes,
   insertArticle,
+  removeArticleById,
 } = require("../models/articles.model");
 const { selectUserByUsername } = require("../models/users.model");
 
@@ -68,5 +69,12 @@ exports.postArticle = (req, res, next) => {
   const { body } = req;
   return insertArticle(body)
     .then((article) => res.status(201).send({ article }))
+    .catch((err) => next(err));
+};
+
+exports.deleteArticleById = (req, res, next) => {
+  const { article_id } = req.params;
+  return removeArticleById(article_id)
+    .then(() => res.status(204).send())
     .catch((err) => next(err));
 };

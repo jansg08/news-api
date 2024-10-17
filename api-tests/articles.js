@@ -352,6 +352,30 @@ exports.articlesTest = () =>
           return Promise.all([assertion1, assertion2]);
         });
       });
+      describe("DELETE", () => {
+        test("204: responds with empty body and deletes article from database", () => {
+          return request(app)
+            .delete("/api/articles/5")
+            .expect(204)
+            .then(({ body }) => {
+              return db.query(`SELECT * FROM articles WHERE article_id = 5`);
+            })
+            .then(({ rows }) => {
+              expect(rows).toEqual([]);
+            });
+        });
+        test("204: also deletes all associated comments with that article", () => {
+          return request(app)
+            .delete("/api/articles/5")
+            .expect(204)
+            .then(({ body }) => {
+              return db.query(`SELECT * FROM comments WHERE article_id = 5`);
+            })
+            .then(({ rows }) => {
+              expect(rows).toEqual([]);
+            });
+        });
+      });
     });
 
     describe("/api/articles/:article_id/comments", () => {

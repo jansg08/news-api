@@ -202,3 +202,29 @@ exports.updateArticleVotes = (id, inc) => {
       ({ rows }) => rows[0] || Promise.reject({ code: 404, msg: "Not found" })
     );
 };
+
+exports.removeArticleById = (id) => {
+  return db
+    .query(
+      `
+      DELETE FROM
+        comments
+      WHERE
+        article_id = $1;
+      `,
+      [id]
+    )
+    .then(() =>
+      db.query(
+        `
+        DELETE FROM
+          articles
+        WHERE
+          article_id = $1
+        RETURNING *;
+        `,
+        [id]
+      )
+    )
+    .then(({ rows }) => rows[0]);
+};
