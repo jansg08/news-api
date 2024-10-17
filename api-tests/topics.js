@@ -21,5 +21,41 @@ exports.topicsTest = () =>
             });
         });
       });
+      describe("POST", () => {
+        const sampleTopic = {
+          slug: "top10",
+          description: "Top 10 lists",
+        };
+        test("201: inserts given topic in the database responds with newly created topic object", () => {
+          return request(app)
+            .post("/api/topics")
+            .send(sampleTopic)
+            .expect(201)
+            .then(({ body }) => {
+              const { topic } = body;
+              expect(topic).toMatchObject({
+                slug: "top10",
+                description: "Top 10 lists",
+              });
+            });
+        });
+        test("201: inserts given topic regardless of any extra properties in the request body", () => {
+          return request(app)
+            .post("/api/topics")
+            .send({
+              ...sampleTopic,
+              topic_img_url:
+                "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+            })
+            .expect(201)
+            .then(({ body }) => {
+              const { topic } = body;
+              expect(topic).toMatchObject({
+                slug: "top10",
+                description: "Top 10 lists",
+              });
+            });
+        });
+      });
     });
   });
