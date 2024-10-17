@@ -134,7 +134,7 @@ describe("/api/articles", () => {
         .get("/api/articles")
         .expect(200)
         .then(({ body }) => {
-          expect(body.articles.length).toBe(13);
+          expect(body.articles.length).toBe(10);
           body.articles.forEach((article) => {
             expect(article).not.toHaveProperty("body");
             expect(typeof article.author).toBe("string");
@@ -226,6 +226,17 @@ describe("/api/articles", () => {
           .then(({ body }) => {
             expect(body.msg).toBe("Bad request");
           });
+      });
+    });
+    describe("limit query", () => {
+      test("200: responds with an array of articles limited to the number passed as the limit query", () => {
+        return request(app)
+          .get("/api/articles?limit=5")
+          .expect(200)
+          .then(({ body }) => expect(body.articles.length).toBe(5));
+      });
+      test("204: responds with no content when provided with a limit query of 0", () => {
+        return request(app).get("/api/articles?limit=0").expect(204);
       });
     });
   });

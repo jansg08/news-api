@@ -38,7 +38,8 @@ exports.selectArticleById = (id) => {
 exports.selectArticles = (
   sort_by = "created_at",
   order = "DESC",
-  topic = "%%"
+  topic = "%%",
+  limit = 10
 ) => {
   return db
     .query(
@@ -75,11 +76,14 @@ exports.selectArticles = (
         GROUP BY
           articles.article_id
         ORDER BY
-          %I %s;
+          %I %s
+        LIMIT
+          %L;
         `,
           topic,
           sort_by,
-          order
+          order,
+          limit
         )
       );
     })
