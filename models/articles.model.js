@@ -120,7 +120,7 @@ exports.selectArticles = (
     });
 };
 
-exports.selectCommentsByArticleId = (id) => {
+exports.selectCommentsByArticleId = (id, limit = 10, p = 1) => {
   return db
     .query(
       `
@@ -130,8 +130,14 @@ exports.selectCommentsByArticleId = (id) => {
         comments
       WHERE
         comments.article_id = $1
+      ORDER BY
+        created_at
+      LIMIT
+        $2
+      OFFSET
+        $3;
       `,
-      [id]
+      [id, limit, (p - 1) * limit]
     )
     .then(({ rows }) => rows);
 };
