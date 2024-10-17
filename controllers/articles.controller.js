@@ -29,8 +29,12 @@ exports.getArticles = (req, res, next) => {
 };
 
 exports.getCommentsByArticleId = (req, res, next) => {
-  const id = req.params.article_id;
-  return Promise.all([selectArticleById(id), selectCommentsByArticleId(id)])
+  const { article_id } = req.params;
+  const { limit, p } = req.query;
+  return Promise.all([
+    selectArticleById(article_id),
+    selectCommentsByArticleId(article_id, limit, p),
+  ])
     .then(([article, comments]) => {
       if (comments.length) {
         res.status(200).send({ comments });

@@ -121,7 +121,7 @@ exports.articlesTest = () =>
           });
         });
         describe("p query", () => {
-          test("200: responds with the 'pth' set articles where each set are of length limit (defaults to 10)", () => {
+          test("200: responds with the 'pth' set of articles where each set are of length limit (defaults to 10)", () => {
             return request(app)
               .get("/api/articles?p=2")
               .expect(200)
@@ -361,7 +361,7 @@ exports.articlesTest = () =>
             .get("/api/articles/1/comments")
             .expect(200)
             .then(({ body }) => {
-              expect(body.comments.length).toBe(11);
+              expect(body.comments.length).toBe(10);
               body.comments.forEach((comment) => {
                 expect(typeof comment.author).toBe("string");
                 expect(typeof comment.body).toBe("string");
@@ -402,6 +402,33 @@ exports.articlesTest = () =>
             .get("/api/articles/yellow/comments")
             .expect(400)
             .then(({ body }) => expect(body.msg).toBe("Bad request"));
+        });
+        describe("limit query", () => {
+          test("200: responds with an array of comments limited to the number passed as the limit query", () => {
+            return request(app)
+              .get("/api/articles/1/comments?limit=5")
+              .expect(200)
+              .then(({ body }) => expect(body.comments.length).toBe(5));
+          });
+          test("204: responds with no content when provided with a limit query of 0", () => {
+            return request(app)
+              .get("/api/articles/1/comments?limit=0")
+              .expect(204);
+          });
+        });
+        describe("p query", () => {
+          test("200: responds with the 'pth' set of comments where each set are of length limit (defaults to 10)", () => {
+            return request(app)
+              .get("/api/articles/1/comments?p=2")
+              .expect(200)
+              .then(({ body }) => {
+                expect(body.comments.length).toBe(1);
+                expect(body.comments[0].comment_id).toBe(5);
+              });
+          });
+          test("204: responds with no content when provided with a page number which doesn't exist given the limit", () => {
+            return request(app).get("/api/articles/1/comments?p=5").expect(204);
+          });
         });
       });
       describe("POST", () => {
