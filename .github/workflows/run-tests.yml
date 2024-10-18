@@ -1,0 +1,31 @@
+name: run tests
+on:
+  pull_request:
+    branches:
+      - main
+jobs:
+  test-utils:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+      - name: installs dependencies
+        run: npm ci
+      - name: runs util test file
+        run: npm run test-utils
+jobs:
+  test-app:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+      - name: Setup Postgres
+        uses: harmon758/postgresql-action@v1
+        with:
+          postgres db: 'nc_new_test'
+          postgres user: 'test_user'
+          postgres password: 'test_password'
+      - name: installs dependencies
+        run: npm ci
+      - name: run app test file
+        run: npm run test-app
