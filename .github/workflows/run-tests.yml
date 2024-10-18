@@ -28,3 +28,5 @@ jobs:
         run: npm ci
       - name: run app test file
         run: npm run test-app
+        env:
+          PGDATABASE: ${{ secrets.PGDATABASE_TEST }}
