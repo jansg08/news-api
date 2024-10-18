@@ -21,7 +21,7 @@ jobs:
       - name: Setup Postgres
         uses: harmon758/postgresql-action@v1
         with:
-          postgresql db: 'nc_new_test'
+          postgresql db: 'nc_news_test'
           postgresql user: 'test_user'
           postgresql password: 'test_password'
       - name: installs dependencies
@@ -29,4 +29,6 @@ jobs:
       - name: run app test file
         run: npm run test-app
         env:
-          PGDATABASE: ${{ secrets.PGDATABASE_TEST }}
+          PGDATABASE: 'nc_news_test'
+          PGUSER: 'test_user'
+          PGPASSWORD: 'test_password'
