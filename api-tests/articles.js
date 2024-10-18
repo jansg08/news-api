@@ -516,7 +516,7 @@ exports.articlesTest = () =>
               username: "icellusedkars",
             })
             .expect(404)
-            .then(({ body }) => expect(body.msg).toBe("Not found"));
+            .then(({ body }) => expect(body.msg).toBe("found"));
         });
         test("400: responds with 'Bad request' when provided with an invalid id", () => {
           return request(app)
