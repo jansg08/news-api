@@ -13,7 +13,6 @@ jobs:
         run: npm ci
       - name: runs util test file
         run: npm run test-utils
-jobs:
   test-app:
     runs-on: ubuntu-latest
     steps:
