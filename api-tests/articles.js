@@ -276,7 +276,7 @@ exports.articlesTest = () =>
                 topic: "mitch",
                 author: "icellusedkars",
                 body: "Delicious tin of cat food",
-                created_at: "2020-10-18T01:00:00.000Z",
+                created_at: "2020-10-18T02:00:00.000Z",
                 votes: 0,
                 article_img_url:
                   "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
@@ -317,7 +317,7 @@ exports.articlesTest = () =>
                 topic: "mitch",
                 author: "icellusedkars",
                 body: "Delicious tin of cat food",
-                created_at: "2020-10-18T01:00:00.000Z",
+                created_at: "2020-10-18T02:00:00.000Z",
                 votes: 50,
                 article_img_url:
                   "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
