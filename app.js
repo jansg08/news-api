@@ -1,5 +1,5 @@
 const express = require("express");
-
+const cors = require("cors");
 const apiRouter = require("./routers/api.router");
 
 const {
@@ -9,6 +9,8 @@ const {
 } = require("./error-handlers");
 
 const app = express();
+
+app.use(cors());
 
 app.use(express.json());
 
